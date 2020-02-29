@@ -1,6 +1,7 @@
 # randomPasswordGenerator
 
-Generates a random password based on provided criteria
+Generates a random password based on provided criteria. Project deployed at -
+https://sandyboon.github.io/randomPasswordGenerator/
 
 The user selects the type of the characters to be included in the password and the length of the password. The provided length must be between 8 and 128.
 ![Password-Length-Choice](./snapshots/PasswordLength.JPG)
