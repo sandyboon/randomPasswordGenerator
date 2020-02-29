@@ -1,5 +1,9 @@
-// Assignment Code
 let generateBtn = document.querySelector('#generate');
+
+let passwordSpecialChars = ' !"#$%&\'()*+,-./:;<=>?@[]^_`{|}~';
+let lowerCaseChars = 'abcdefghijklmnopqrstuvqzyz';
+let upperCaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+let numberchars = '12345678890';
 
 let passwordProperties = {
   length: -1,
@@ -17,21 +21,24 @@ let passwordProperties = {
   // }
 };
 
-let passwordSpecialChars = ' !"#$%&\'()*+,-./:;<=>?@[]^_`{|}~';
-let lowerCaseChars = 'abcdefghijklmnopqrstuvqzyz';
-let upperCaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-let numberchars = '12345678890';
-
 // Write password to the #password input
 function writePassword(passwordProperties) {
   if (
     typeof passwordProperties === 'undefined' ||
     passwordProperties === null
   ) {
-    alert('Password prop is undedined');
+    alert('Please refresh the page.');
   }
-  console.log(passwordProperties);
   //Ask the user for the length of the password, if not already provided.
+  askUserForPasswordChoices(passwordProperties);
+
+  validatePassWordChoices(passwordProperties);
+
+  let password = generatePassword(passwordProperties);
+  setPassword(password);
+}
+
+function askUserForPasswordChoices(passwordProperties) {
   if (passwordProperties.length < 0) {
     passwordProperties.length = prompt(
       'Please provide the length of the random password. The specified length must be a number between 8 and 128.'
@@ -39,32 +46,24 @@ function writePassword(passwordProperties) {
   }
   if (passwordProperties.containsLowerCase === null) {
     passwordProperties.containsLowerCase = confirm(
-      'Should the password contain at least one lower case character?'
+      'Should the password contain at least one lower case character(a-z)?'
     );
   }
-
   if (passwordProperties.containsUpperCase === null) {
     passwordProperties.containsUpperCase = confirm(
-      'Should the password contain at least one upper case character?'
+      'Should the password contain at least one upper case character(A-Z)?'
     );
   }
-
   if (passwordProperties.containsNumber === null) {
     passwordProperties.containsNumber = confirm(
-      'Should the password contain at least one number?'
+      'Should the password contain at least one number(0-9)?'
     );
   }
-
   if (passwordProperties.containsSpecialCharacter === null) {
     passwordProperties.containsSpecialCharacter = confirm(
-      'Should the password contain at least one special character?'
+      'Should the password contain at least one special character(!"#$%&\'()*+,-./:;<=>?@[]^_`{|}~)?'
     );
   }
-
-  validatePassWordChoices(passwordProperties);
-
-  let password = generatePassword(passwordProperties);
-  setPassword(password);
 }
 
 function setPassword(password) {
@@ -74,19 +73,14 @@ function setPassword(password) {
 
 function generatePassword(passwordProperties) {
   let passwordMatchingCritera = [];
-  if (passwordProperties.containsLowerCase) {
-    passwordMatchingCritera.push(getRandomLowerCaseChar());
-  }
-  if (passwordProperties.containsUpperCase) {
-    passwordMatchingCritera.push(getRandomUpperCaseChar());
-  }
-  if (passwordProperties.containsNumber) {
-    passwordMatchingCritera.push(getRandomNumber());
-  }
-  if (passwordProperties.containsSpecialCharacter) {
-    passwordMatchingCritera.push(getRandomSpecialChar());
-  }
+  pushMinimumRequiredChars(passwordProperties, passwordMatchingCritera);
   //find out how many more characters need to be pushed into the array to satisfy the length requirement.
+  pushRemainingCharacters(passwordProperties, passwordMatchingCritera);
+
+  return passwordMatchingCritera.join('');
+}
+
+function pushRemainingCharacters(passwordProperties, passwordMatchingCritera) {
   let fillerCount = passwordProperties.length - passwordMatchingCritera.length;
   for (let i = 1; i <= fillerCount; i++) {
     //This is the predfined order of priority that we have hard coded. This can further be randomized
@@ -100,24 +94,21 @@ function generatePassword(passwordProperties) {
       passwordMatchingCritera.push(getRandomSpecialChar());
     }
   }
-
-  return passwordMatchingCritera.join('');
 }
 
-function getRandomSpecialChar() {
-  return passwordSpecialChars[genreateRandomNumber(32)];
-}
-
-function getRandomNumber() {
-  return numberchars[genreateRandomNumber(9)];
-}
-
-function getRandomUpperCaseChar() {
-  return upperCaseChars[genreateRandomNumber(25)];
-}
-
-function getRandomLowerCaseChar() {
-  return lowerCaseChars[genreateRandomNumber(25)];
+function pushMinimumRequiredChars(passwordProperties, passwordMatchingCritera) {
+  if (passwordProperties.containsLowerCase) {
+    passwordMatchingCritera.push(getRandomLowerCaseChar());
+  }
+  if (passwordProperties.containsUpperCase) {
+    passwordMatchingCritera.push(getRandomUpperCaseChar());
+  }
+  if (passwordProperties.containsNumber) {
+    passwordMatchingCritera.push(getRandomNumber());
+  }
+  if (passwordProperties.containsSpecialCharacter) {
+    passwordMatchingCritera.push(getRandomSpecialChar());
+  }
 }
 
 function validatePassWordChoices(passwordProperties) {
@@ -147,6 +138,22 @@ function validatePassWordChoices(passwordProperties) {
     passwordProperties.containsSpecialCharacter = null;
     writePassword(passwordProperties);
   }
+}
+
+function getRandomSpecialChar() {
+  return passwordSpecialChars[genreateRandomNumber(32)];
+}
+
+function getRandomNumber() {
+  return numberchars[genreateRandomNumber(9)];
+}
+
+function getRandomUpperCaseChar() {
+  return upperCaseChars[genreateRandomNumber(25)];
+}
+
+function getRandomLowerCaseChar() {
+  return lowerCaseChars[genreateRandomNumber(25)];
 }
 
 /**
